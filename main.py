@@ -1,5 +1,6 @@
 from Uitwerkingen.games.roulette import play_roulette
 from Uitwerkingen.games.fruitmachine import play_fruitmachine
+from Uitwerkingen.games.blackjack import play_blackjack
 
 
 #Verplichte casinokosten
@@ -69,6 +70,7 @@ while True:
 -----SPELLEN-----
 1. Roulette
 2. Fruitmachine
+3. Blackjack
 0. Terug
     """)
 
@@ -79,6 +81,9 @@ while True:
 
         elif game_choice == 2:
             balance = play_fruitmachine(balance)
+
+        elif game_choice == 3:
+            balance = play_blackjack(balance)
 
         elif game_choice == 0:
             continue

@@ -1,6 +1,5 @@
 from Uitwerkingen.games.roulette import ask_for_bet
 
-
 def play_fruitmachine(balance):
     round_number = 1
 
