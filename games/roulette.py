@@ -1,4 +1,6 @@
 def show_roulette_options():
+    """Toont de verschillende opties van roulette."""
+
     print("""Kies één van de volgende opties:
           1. Rood
           2. Zwart
@@ -8,6 +10,8 @@ def show_roulette_options():
 
 
 def determine_win(choice, color, odd_even):
+    """Bepaalt aan de hand van de gekozen gok of de speler heeft gewonnen."""
+
     if choice == 1 and color == "rood":
         return True
     elif choice == 2 and color == "zwart":
@@ -21,6 +25,8 @@ def determine_win(choice, color, odd_even):
 
 
 def ask_for_bet(balance):
+    """Vraagt om een inzet die niet hoger mag zijn dan het huidige saldo."""
+
     while True:
         stake = float(input("Hoeveel geld wil je inzetten: "))
 
@@ -37,6 +43,8 @@ def ask_for_bet(balance):
 
 
 def play_roulette(balance):
+    """In deze functie wordt roulette gespeeld en het saldo bijgewerkt."""
+
     round_number = 1
 
     while True:
@@ -55,14 +63,6 @@ def play_roulette(balance):
         if spin == 0:
             color = "groen"
             odd_even = "geen"
-
-        elif spin <= 18:
-            if spin % 2 == 0:
-                color = "zwart"
-                odd_even = "even"
-            else:
-                color = "rood"
-                odd_even = "oneven"
 
         else:
             if spin % 2 == 0:
