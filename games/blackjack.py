@@ -7,6 +7,8 @@ RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 
 
 def create_deck():
+    """Maakt een deck van 52 kaarten"""
+
     deck = []
     for suit in SUITS:
         for rank in RANKS:
@@ -17,6 +19,8 @@ def create_deck():
 
 
 def draw_card(deck,hand):
+    """Trekt een kaart uit het deck en voegt deze toe aan de hand"""
+
     card = deck.pop()
     hand.append(card)
 
@@ -24,6 +28,8 @@ def draw_card(deck,hand):
 
 
 def show_hand(label, hand, hide_card=False):
+    """Toont de kaarten van de hand en zorgt dat de tweede kaart kan worden verborgen"""
+
     visible_cards = hand[:]
 
     if hide_card == True:
@@ -33,6 +39,9 @@ def show_hand(label, hand, hide_card=False):
 
 
 def calculate_hand_value(hand):
+    """Berekent de totale waarde van de hand en maakt daarin onderscheid voor A, J, Q, K in waarde.
+    Alle andere kaarten behouden hun integer waarde"""
+
     total = 0
     number_of_aces = 0
 
@@ -51,6 +60,8 @@ def calculate_hand_value(hand):
 
 
 def calculate_card_value(card):
+    """Berekent de waarde van één kaart"""
+
     rank = card[1:]
 
     if rank == "J" or rank == "K" or rank == "Q":
@@ -62,7 +73,7 @@ def calculate_card_value(card):
 
 
 def play_blackjack(balance):
-
+    """In deze functie wordt blackjack gespeeld en het saldo bijgewerkt"""
 
     while True:
 
@@ -89,6 +100,9 @@ def play_blackjack(balance):
             draw_card(deck, player_hand)
 
             show_hand("Jouw hand", player_hand, hide_card=False)
+
+            print(f"De waarde van de hand is: {calculate_hand_value(player_hand)}")
+
             show_hand("Dealer hand", dealer_hand, hide_card=True)
 
             while calculate_hand_value(player_hand) < 21:
@@ -102,8 +116,6 @@ def play_blackjack(balance):
                     print(f"Je hebt kaart {drawn_card} getrokken")
 
                     show_hand("Jouw hand", player_hand, hide_card=False)
-
-                    print(f"De waarde van de hand is: {calculate_hand_value(player_hand)}")
 
                     if calculate_hand_value(player_hand) > 21:
                         print("Helaas, je bent bust")
