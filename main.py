@@ -1,15 +1,15 @@
 from Uitwerkingen.games.roulette import play_roulette
 from Uitwerkingen.games.fruitmachine import play_fruitmachine
 from Uitwerkingen.games.blackjack import play_blackjack
-
+from profiles import show_account, create_account, show_all_players, switch_account, remove_account, initialize_player, \
+    register_played_game
+from profiles import get_current_balance, update_current_balance
 
 #Verplichte casinokosten
 ENTRANCE_FEE = 15
 CLOAKROOM_FEE = 3
 MANDATORY_DRINK_COST = 5
 TOTAL_FIXED_COSTS = ENTRANCE_FEE + CLOAKROOM_FEE + MANDATORY_DRINK_COST
-
-MIN_AGE = 18
 
 
 def show_main_menu():
@@ -25,74 +25,36 @@ def show_main_menu():
       0. Stop""")
 
 
-def ask_input():
-    """Vraagt de persoonlijke gegevens en het startbudget van de speler."""
+def show_account_menu():
+    show_account()
 
-    name = (input("Voer je voor- en achternaam in: "))
-    birthdate = (input("Voer je geboortedatum in (dd-mm-yyyy): "))
-    gender = (input("Wat is je geslacht? (M/V/A): "))
-    starting_budget = float(input("Wat is je startbudget in euro?: "))
+    print("""Kies één van de volgende opties:
+1. Toon alle accounts
+2. Nieuw account
+3. Wissel account
+4. Verwijder account""")
 
-    return name, birthdate, gender, starting_budget
+    choice = input("Welke optie kies je?: ")
 
+    if choice == "1":
+        show_all_players()
 
-def determine_salutation(gender, name):
-    """Begroet de speler o.b.v. het ingevoerde geslacht en de naam."""
+    elif choice == "2":
+        create_account(TOTAL_FIXED_COSTS)
 
-    if gender == "M":
-        print(f"Welkom, meneer,", name)
+    elif choice == "3":
+        switch_account()
 
-    elif gender == "V":
-        print(f"Welkom, mevrouw,", name)
+    elif choice == "4":
+        remove_account()
 
     else:
-        print(f"Welkom,", name)
-
-
-def access_casino(birthdate):
-    """Controleert a.d.h.v. het geboortejaar of de speler oud genoeg is om toegang te krijgen tot het casino."""
-
-    birth_day, birth_month, birth_year = birthdate.split("-")
-    birth_year = int(birth_year)
-
-    if birth_year > 2008:
-        print("""Je voldoet niet aan de minimale leeftijdsgrens van 18 jaar. 
-Hierdoor heb je geen toegang tot het casino.
-        """)
-        exit(1)
-
-
-def show_intro(starting_budget):
-    """Berekent het startsaldo van de speler en dit voldoende is om toegang te krijgen tot het casino."""
-
-    balance = starting_budget - TOTAL_FIXED_COSTS
-    budget_check = "Je hebt genoeg budget voor toegang tot het casino." if TOTAL_FIXED_COSTS <= starting_budget else "Je hebt niet voldoende budget om toegang te krijgen tot het casino."
-
-    return balance, budget_check
+        print("Ongeldige keuze.")
 
 
 def main():
     """Start het casinoprogramma en reageert op de keuzes van de speler."""
-
-    name, birthdate, gender, starting_budget = ask_input()
-    access_casino(birthdate)
-    balance, budget_check = show_intro(starting_budget)
-
-    print("----------------------------")
-    print("Casino de Gouden Driehoek")
-    print("----------------------------")
-    print()
-    determine_salutation(gender, name)
-    print()
-    print("Budgetchecker")
-    print("---------------")
-    print(f"Startbudget: €{starting_budget:.2f}")
-    print(f"Vaste kosten: €{TOTAL_FIXED_COSTS:.2f}")
-    print(f"Saldo: €{balance:.2f}")
-    print("----------------------------")
-    print()
-    print(budget_check)
-    print()
+    initialize_player(TOTAL_FIXED_COSTS)
 
     while True:
         show_main_menu()
@@ -112,13 +74,22 @@ def main():
             game_choice = int(input("Welk spel wil je spelen?: "))
 
             if game_choice == 1:
+                balance = get_current_balance()
                 balance = play_roulette(balance)
+                update_current_balance(balance)
+                register_played_game("Roulette")
 
             elif game_choice == 2:
+                balance = get_current_balance()
                 balance = play_fruitmachine(balance)
+                update_current_balance(balance)
+                register_played_game("Fruitmachine")
 
             elif game_choice == 3:
+                balance = get_current_balance()
                 balance = play_blackjack(balance)
+                update_current_balance(balance)
+                register_played_game("Blackjack")
 
             elif game_choice == 0:
                 continue
@@ -127,12 +98,11 @@ def main():
                 print("Ongeldige keuze.")
 
         elif choice == 2:
+            balance = get_current_balance()
             print(f"Je huidige saldo is: €{balance:.2f}")
 
         elif choice == 3:
-            print(f"Naam: {name}")
-            print(f"Geboortedatum: {birthdate}")
-            print(f"Geslacht: {gender}")
+            show_account_menu()
 
         elif choice == 0:
             print("Bedankt voor je bezoek, tot de volgende keer!")
