@@ -1,6 +1,11 @@
 import random
 from Uitwerkingen.games.roulette import ask_for_bet
 
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
+
 #Constanten
 SUITS = ["♠", "♥", "♦", "♣"]
 RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
@@ -35,7 +40,15 @@ def show_hand(label, hand, hide_card=False):
     if hide_card == True:
         visible_cards[1] = "??"
 
-    print(f"{label}: {' | '.join(visible_cards)}")
+    message = f"{label}: {' | '.join(visible_cards)}"
+
+    console.print(
+        Panel(
+            message,
+            title="Output",
+            border_style="#FFFFFF"
+        )
+    )
 
 
 def calculate_hand_value(hand):
@@ -77,8 +90,18 @@ def play_blackjack(balance):
 
     while True:
 
-        print("Je hebt gekozen om blackjack te spelen")
-        print(f"Je huidige saldo is: €{balance:.2f}")
+        message = (
+            "Je hebt gekozen om blackjack te spelen\n"
+            f"Je huidige saldo is: €{balance:.2f}"
+        )
+
+        console.print(
+            Panel(
+                message,
+                title="Blackjack",
+                border_style="#FFFFFF"
+            )
+        )
 
         choice = input("Druk op enter om te spelen of typ 'stop' om te stoppen: ")
 
@@ -101,7 +124,7 @@ def play_blackjack(balance):
 
             show_hand("Jouw hand", player_hand, hide_card=False)
 
-            print(f"De waarde van de hand is: {calculate_hand_value(player_hand)}")
+            console.print(f"[#FFD700]De waarde van de hand is: {calculate_hand_value(player_hand)}[/#FFD700]")
 
             show_hand("Dealer hand", dealer_hand, hide_card=True)
 
@@ -113,23 +136,23 @@ def play_blackjack(balance):
 
                 elif choice == "hit":
                     drawn_card = draw_card(deck, player_hand)
-                    print(f"Je hebt kaart {drawn_card} getrokken")
+                    console.print(f"[italic]Je hebt kaart {drawn_card} getrokken[/italic]")
 
                     show_hand("Jouw hand", player_hand, hide_card=False)
 
                     if calculate_hand_value(player_hand) > 21:
-                        print("Helaas, je bent bust")
+                        console.print("[bold red]Helaas, je bent bust![/bold red]")
                         return balance
 
                 else:
-                    print("Ongeldige keuze")
+                    console.print("[bold red]Ongeldige keuze[/bold red]")
                     continue
 
             show_hand("Dealer hand", dealer_hand, hide_card=False)
 
             while calculate_hand_value(dealer_hand) < 17:
                 drawn_card = draw_card(deck, dealer_hand)
-                print(f"De dealer heeft kaart {drawn_card} getrokken")
+                console.print(f"[italic]De dealer heeft kaart {drawn_card} getrokken[/italic]")
 
                 show_hand("Dealer hand", dealer_hand, hide_card=False)
 
@@ -138,24 +161,40 @@ def play_blackjack(balance):
 
             if dealer_total > 21:
                 balance = balance + 2 * stake
-                print(f"Gefeliciteerd, je hebt gewonnen. Je nieuwe saldo bedraagt: €{balance:.2f}")
+                result = f"Gefeliciteerd, je hebt gewonnen. Je nieuwe saldo bedraagt: €{balance:.2f}"
 
             elif player_total > dealer_total:
                 balance = balance + 1.5 * stake
-                print(f"Gefeliciteerd, je hebt gewonnen. Je nieuwe saldo bedraagt: €{balance:.2f}")
+                result = f"Gefeliciteerd, je hebt gewonnen. Je nieuwe saldo bedraagt: €{balance:.2f}"
 
             elif player_total == dealer_total:
                 balance = balance + stake
-                print(f"Het is gelijkspel. Je saldo bedraagt: €{balance:.2f}")
+                result = f"Het is gelijkspel. Je saldo bedraagt: €{balance:.2f}"
 
             else:
-                print(f"Helaas, je hebt verloren. Je verliest €{stake:.2f}")
+                result = f"Helaas, je hebt verloren. Je verliest €{stake:.2f}"
 
-            print(f"Je uiteindelijke saldo bedraagt: €{balance:.2f}")
+            message = (
+                f"Jouw hand: {' | ' .join(player_hand)}\n"
+                f"Dealer hand: {' | '.join(dealer_hand)}\n\n"
+                f"Jouw totaal: {player_total}\n"
+                f"Dealer totaal: {dealer_total}\n\n"
+                f"{result}\n"
+                f"Je uiteindelijke saldo bedraagt: €{balance:.2f}"
+            )
+
+            console.print(
+                Panel(
+                    message,
+                    title="Output",
+                    border_style="#FFFFFF"
+                )
+            )
+
             return balance
 
         else:
-            print("Ongeldige keuze")
+            console.print("[bold red]Ongeldige keuze[/bold red]")
 
 
 

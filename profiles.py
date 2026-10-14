@@ -1,3 +1,12 @@
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich import box
+
+from datetime import datetime, date
+
+console = Console()
+
 MIN_AGE = 18
 
 players = {}
@@ -8,26 +17,36 @@ def determine_salutation(gender, name):
     """Begroet de speler o.b.v. het ingevoerde geslacht en de naam."""
 
     if gender == "M":
-        print(f"Welkom, meneer,", name)
+        return f"Welkom, meneer, {name}"
 
     elif gender == "V":
-        print(f"Welkom, mevrouw,", name)
+        return f"Welkom, mevrouw, {name}"
 
     else:
-        print(f"Welkom,", name)
+        return f"Welkom, {name}"
 
 
-def access_casino(birthdate):
-    """Controleert a.d.h.v. het geboortejaar of de speler oud genoeg is om toegang te krijgen tot het casino."""
+def calculate_age(birthdate):
+    """Deze functie controleert op de dag nauwkeurig of de gebruiker 18+ is en oud genoeg is om toegang te krijgen tot het casino."""
 
-    birth_day, birth_month, birth_year = birthdate.split("-")
-    birth_year = int(birth_year)
+    birthdate_value = datetime.strptime(birthdate, "%d-%m-%Y").date()
+    today_value = date.today()
 
-    if birth_year > 2008:
-        print("""Je voldoet niet aan de minimale leeftijdsgrens van 18 jaar. 
-    Hierdoor heb je geen toegang tot het casino.
-            """)
+    if birthdate_value > today_value:
+        raise ValueError("""De geboortedatum mag niet in de toekomst liggen!.""")
+
+    age = today_value.year - birthdate_value.year
+
+    if (today_value.month, today_value.day) < (birthdate_value.month, birthdate_value.day):
+        age -= 1
+
+    if age < MIN_AGE:
+        console.print("""[bold red]Je voldoet niet aan de minimale leeftijdsgrens van 18 jaar. 
+            Je hebt geen toegang tot het casino.
+                    [/bold red]""")
         exit(1)
+
+    return age
 
 
 def create_account(total_cost, name=None):
@@ -38,11 +57,11 @@ def create_account(total_cost, name=None):
     if name is None:
         name = input("Naam voor het nieuwe account: ").capitalize()
         if name in players:
-            print("Dit account bestaat al. Gebruik wissel account om het te openen.")
+            console.print("[bold red]Dit account bestaat al. Gebruik wissel account om het te openen.[/bold red]")
             return
 
     birthdate = (input("Voer je geboortedatum in (dd-mm-yyyy): "))
-    access_casino(birthdate)
+    calculate_age(birthdate)
 
     gender = (input("Wat is je geslacht? (M/V/A): "))
     starting_budget = float(input("Wat is je startbudget in euro?: "))
@@ -72,21 +91,40 @@ def show_account():
     balance = profile["saldo"]
     played_games = profile["gespeelde_spellen"]
 
-    print(f"Naam: {current_player}")
-    print(f"Saldo: {balance:.2f}")
-    print(f"Gespeelde spellen: {played_games}")
-    print(f"Beschikbare spelers: {list(players.keys())}")
+    console.print(f"[bold]Naam[/bold]: {current_player}")
+    console.print(f"[bold]Saldo[/bold]: {balance:.2f}")
+    console.print(f"[bold]Gespeelde spellen[/bold]: {played_games}")
+    console.print(f"[bold]Beschikbare spelers[/bold]: {list(players.keys())}")
 
 
 def show_all_players():
     """Toont alle spelers en hun huidige saldo."""
 
+    table = Table(
+        box=box.SQUARE,
+        show_lines=False,
+        header_style="Bold",
+        padding=(0, 2),
+    )
+
+    table.add_column("Speler", justify="center")
+    table.add_column("Saldo", justify="right")
+
     for name, profile in players.items():
-        print(f"{name}: saldo €{profile['saldo']}")
+        table.add_row(name, f"€{profile['saldo']:.2f}")
+
+    console.print(
+        Panel.fit(
+            table,
+            title="[bold #FFFFFF]Beschikbare spelers[/bold #FFFFFF]",
+            border_style="#FFFFFF",
+            padding=(0, 1),
+        )
+    )
 
 
 def switch_account():
-    """Wisselt naar een ander bestaand spelersaccount en sluit accouts aan die niet bestaan."""
+    """Wisselt naar een ander bestaand spelersaccount en sluit accounts uit die niet bestaan."""
 
     global current_player
 
@@ -95,7 +133,7 @@ def switch_account():
     if name in players:
         current_player = name
     else:
-        print("Dit account bestaat niet.")
+        console.print("[red]Dit account bestaat niet.[/red]")
         return
 
 
@@ -107,11 +145,11 @@ def remove_account():
     name = input("Welk account wil je verwijderen?: ").capitalize()
 
     if name not in players:
-        print("Dit account bestaat niet.")
+        console.print("[red]Dit account bestaat niet.[/red]")
         return
 
     elif len(players) == 1:
-        print("Het laatste account mag niet worden verwijderd.")
+        console.print("[bold red]Het laatste account mag niet worden verwijderd.[/bold red]")
         return
 
     del players[name]
@@ -191,16 +229,28 @@ def initialize_player(total_cost):
         profile = players[current_player]
         balance = profile["saldo"]
 
-        print("----------------------------")
-        print("Casino de Gouden Driehoek")
-        print("----------------------------")
-        print()
-        determine_salutation(profile["gender"], current_player)
-        print()
-        print("Budgetchecker")
-        print("---------------")
-        print(f"Saldo: €{balance:.2f}")
-        print("----------------------------")
+        salutation = determine_salutation(profile["gender"], current_player)
+
+        table = Table(
+            box=None,
+            show_header=False,
+            padding=(0,2)
+        )
+
+        table.add_column("Omschrijving")
+        table.add_column("Bedrag", justify="right")
+
+        table.add_row(salutation, "")
+        table.add_row("","")
+        table.add_row("Huidig saldo", f"€{balance:.2f}")
+
+        console.print(
+            Panel.fit(
+                table,
+                title="Casino de Gouden Driehoek",
+                border_style="#FFFFFF"
+            )
+        )
 
     else:
         create_account(total_cost, name)
@@ -209,15 +259,27 @@ def initialize_player(total_cost):
         balance = profile["saldo"]
         starting_budget = balance + total_cost
 
-        print("----------------------------")
-        print("Casino de Gouden Driehoek")
-        print("----------------------------")
-        print()
-        determine_salutation(profile["gender"], name)
-        print()
-        print("Budgetchecker")
-        print("---------------")
-        print(f"Startbudget: €{starting_budget:.2f}")
-        print(f"Vaste kosten: €{total_cost:.2f}")
-        print(f"Saldo: €{balance:.2f}")
-        print("----------------------------")
+        salutation = determine_salutation(profile["gender"], current_player)
+
+        table = Table(
+            box=None,
+            show_header=False,
+            padding=(0, 2)
+        )
+
+        table.add_column("Omschrijving")
+        table.add_column("Bedrag", justify="right")
+
+        table.add_row(salutation, "")
+        table.add_row("", "")
+        table.add_row("Startbudget", f"€{starting_budget:.2f}")
+        table.add_row("Vaste kosten", f"€{total_cost:.2f}")
+        table.add_row("Huidig saldo", f"€{balance:.2f}")
+
+        console.print(
+            Panel.fit(
+                table,
+                title="Casino de Gouden Driehoek",
+                border_style="#FFFFFF"
+            )
+        )

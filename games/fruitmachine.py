@@ -1,21 +1,23 @@
 from Uitwerkingen.games.roulette import ask_for_bet
 
+from rich.console import Console
+from rich.panel import Panel
 
-def determine_rolls(round_number):
+console = Console()
+
+from random import choice
+
+SYMBOLS = ["kers", "citroen", "ster", "bel", "diamant"]
+
+
+def determine_rolls():
     """Bepaalt a.d.h.v. het rondenummer welke drie symbolen worden gedraaid."""
 
-    result = round_number % 5
+    rol1 = choice(SYMBOLS)
+    rol2 = choice(SYMBOLS)
+    rol3 = choice(SYMBOLS)
 
-    if result == 1:
-        return "kers", "citroen", "ster"
-    elif result == 2:
-        return "kers", "kers", "kers"
-    elif result == 3:
-        return "ster", "ster", "citroen"
-    elif result == 4:
-        return "citroen", "kers", "ster"
-    else:
-        return "ster", "ster", "ster"
+    return rol1, rol2, rol3
 
 
 def determine_payout(rol1, rol2, rol3, stake):
@@ -32,12 +34,20 @@ def determine_payout(rol1, rol2, rol3, stake):
 def play_fruitmachine(balance):
     """In deze functie wordt de fruitmachine gespeeld en het saldo bijgewerkt."""
 
-    round_number = 1
-
     while True:
 
-        print("Je hebt gekozen om de fruitmachine te spelen")
-        print(f"Jouw huidig saldo is: {balance}")
+        message= (
+            "Je hebt gekozen om de fruitmachine te spelen!\n"
+            f"Jouw huidige saldo is: {balance:.2f}"
+        )
+
+        console.print(
+            Panel(
+                message,
+                title="Fruitmachine",
+                border_style="#FFFFFF"
+            )
+        )
 
         choice = input("Druk op enter om te spelen of typ 'stop' om te stoppen: ")
 
@@ -49,21 +59,33 @@ def play_fruitmachine(balance):
             balance -= stake
 
         else:
-            print("Ongeldige keuze.")
+            console.print("[bold red]Ongeldige keuze.[/bold red]")
             continue
 
-        rol1, rol2, rol3 = determine_rolls(round_number)
-        print(f"Rollen: {rol1}, {rol2}, {rol3}")
+        rol1, rol2, rol3 = determine_rolls()
 
         payout = determine_payout(rol1, rol2, rol3, stake)
 
         if payout > 0:
             balance += payout
-            print(f"Gefeliciteerd! Je wint €{payout:.2f}")
+            result = f"Gefeliciteerd! Je wint €{payout:.2f}"
 
         else:
-            print("Helaas, je hebt verloren.")
+            result = (
+                "Helaas, je hebt verloren.\n"
+                f"Je verliest €{stake:.2f}"
+            )
 
-        print(f"Je huidige saldo is: €{balance:.2f}")
+        message = (
+            f"Rollen: {rol1} | {rol2} | {rol3}\n\n"
+            f"{result}\n"
+            f"Je huidige saldo is: €{balance:.2f}"
+        )
 
-        round_number += 1
+        console.print(
+            Panel(
+                message,
+                title="Output",
+                border_style="#FFFFFF"
+            )
+        )

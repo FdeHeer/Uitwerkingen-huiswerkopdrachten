@@ -5,6 +5,13 @@ from profiles import show_account, create_account, show_all_players, switch_acco
     register_played_game
 from profiles import get_current_balance, update_current_balance
 
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich import box
+
+console = Console()
+
 #Verplichte casinokosten
 ENTRANCE_FEE = 15
 CLOAKROOM_FEE = 3
@@ -15,24 +22,57 @@ TOTAL_FIXED_COSTS = ENTRANCE_FEE + CLOAKROOM_FEE + MANDATORY_DRINK_COST
 def show_main_menu():
     """Toont de verschillende opties van het hoofdmenu."""
 
-    print()
-    print("-----HOOFDMENU-----")
-    print()
-    print("""Kies één van de volgende opties:
-      1. Spellen
-      2. Saldo
-      3. Account
-      0. Stop""")
+    table = Table(
+        box=box.SQUARE,
+        show_lines=False,
+        header_style="Bold",
+        padding=(0, 2),
+    )
+
+    table.add_column("Optie", justify="center")
+    table.add_column("Actie", justify="right")
+
+    table.add_row("1", "Spellen")
+    table.add_row("2", "Saldo")
+    table.add_row("3", "Account")
+    table.add_row("4", "Stop")
+
+    console.print(
+        Panel.fit(
+            table,
+            title="[bold #FFFFFF]HOOFDMENU[/bold #FFFFFF]",
+            border_style="#FFFFFF",
+            padding=(0, 1),
+        )
+    )
 
 
 def show_account_menu():
     show_account()
 
-    print("""Kies één van de volgende opties:
-1. Toon alle accounts
-2. Nieuw account
-3. Wissel account
-4. Verwijder account""")
+    table = Table(
+        box=box.SQUARE,
+        show_lines=False,
+        header_style="Bold",
+        padding=(0, 2),
+    )
+
+    table.add_column("Optie", justify="center")
+    table.add_column("Actie", justify="center")
+
+    table.add_row("1", "Toon alle accounts")
+    table.add_row("2", "Nieuw account")
+    table.add_row("3", "Wissel account")
+    table.add_row("4", "Verwijder account")
+
+    console.print(
+        Panel.fit(
+            table,
+            title="[bold #FFFFFF]ACCOUNTMENU[/bold #FFFFFF]",
+            border_style="#FFFFFF",
+            padding=(0, 1),
+        )
+    )
 
     choice = input("Welke optie kies je?: ")
 
@@ -49,7 +89,7 @@ def show_account_menu():
         remove_account()
 
     else:
-        print("Ongeldige keuze.")
+        console.print("[red]Ongeldige keuze[/red]")
 
 
 def main():
@@ -59,17 +99,33 @@ def main():
     while True:
         show_main_menu()
 
-        print()
         choice = int(input("Kies een optie: "))
 
         if choice == 1:
-            print("""
------SPELLEN-----
-    1. Roulette
-    2. Fruitmachine
-    3. Blackjack
-    0. Terug
-        """)
+
+            table = Table(
+                box=box.SQUARE,
+                show_lines=False,
+                header_style="Bold",
+                padding=(0, 2),
+            )
+
+            table.add_column("Optie", justify="center")
+            table.add_column("Spel", justify="right")
+
+            table.add_row("1", "Roulette")
+            table.add_row("2", "Fruitmachine")
+            table.add_row("3", "Blackjack")
+            table.add_row("0", "Terug")
+
+            console.print(
+                Panel.fit(
+                    table,
+                    title="[bold #FFFFFF]SPELLEN[/bold #FFFFFF]",
+                    border_style="#FFFFFF",
+                    padding=(0, 1),
+                )
+            )
 
             game_choice = int(input("Welk spel wil je spelen?: "))
 
@@ -95,20 +151,20 @@ def main():
                 continue
 
             else:
-                print("Ongeldige keuze.")
+                console.print("[red]Ongeldige keuze[/red]")
 
         elif choice == 2:
             balance = get_current_balance()
-            print(f"Je huidige saldo is: €{balance:.2f}")
+            console.print(f"[bold blue]Je huidige saldo is: €{balance:.2f}[/bold blue]")
 
         elif choice == 3:
             show_account_menu()
 
-        elif choice == 0:
-            print("Bedankt voor je bezoek, tot de volgende keer!")
+        elif choice == 4:
+            console.print("[bold]Bedankt voor je bezoek, tot de volgende keer![/bold]")
             break
 
         else:
-            print("Ongeldige keuze.")
+            console.print("[red]Ongeldige keuze[/red]")
 
 main()
