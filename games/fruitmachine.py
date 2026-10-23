@@ -3,15 +3,17 @@ from Uitwerkingen.games.roulette import ask_for_bet
 from rich.console import Console
 from rich.panel import Panel
 
+from random import choice
+
 console = Console()
 
-from random import choice
+BORDER_STYLE = "#FFFFFF"
 
 SYMBOLS = ["kers", "citroen", "ster", "bel", "diamant"]
 
 
 def determine_rolls():
-    """Bepaalt a.d.h.v. het rondenummer welke drie symbolen worden gedraaid."""
+    """Determines which three symbols appear based on the round number."""
 
     rol1 = choice(SYMBOLS)
     rol2 = choice(SYMBOLS)
@@ -21,7 +23,7 @@ def determine_rolls():
 
 
 def determine_payout(rol1, rol2, rol3, stake):
-    """Berekent de uitbetaling o.b.v. de uitkomst van de drie symbolen en de inzet."""
+    """Calculates the payout based on the three symbols and the bet amount."""
 
     if rol1 == rol2 and rol2 == rol3:
         return 3 * stake
@@ -32,7 +34,7 @@ def determine_payout(rol1, rol2, rol3, stake):
 
 
 def play_fruitmachine(balance):
-    """In deze functie wordt de fruitmachine gespeeld en het saldo bijgewerkt."""
+    """Plays the slotmachine and update the player's balance."""
 
     while True:
 
@@ -45,7 +47,7 @@ def play_fruitmachine(balance):
             Panel(
                 message,
                 title="Fruitmachine",
-                border_style="#FFFFFF"
+                border_style=BORDER_STYLE
             )
         )
 
@@ -86,6 +88,6 @@ def play_fruitmachine(balance):
             Panel(
                 message,
                 title="Output",
-                border_style="#FFFFFF"
+                border_style=BORDER_STYLE
             )
         )
