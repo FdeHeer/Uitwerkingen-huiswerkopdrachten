@@ -7,6 +7,8 @@ from datetime import datetime, date
 
 console = Console()
 
+BORDER_STYLE = "#FFFFFF"
+
 MIN_AGE = 18
 
 players = {}
@@ -14,7 +16,7 @@ current_player = None
 
 
 def determine_salutation(gender, name):
-    """Begroet de speler o.b.v. het ingevoerde geslacht en de naam."""
+    """Greets the player based on their entered gender and name."""
 
     if gender == "M":
         return f"Welkom, meneer, {name}"
@@ -27,7 +29,7 @@ def determine_salutation(gender, name):
 
 
 def calculate_age(birthdate):
-    """Deze functie controleert op de dag nauwkeurig of de gebruiker 18+ is en oud genoeg is om toegang te krijgen tot het casino."""
+    """Checks whether the player is at least 18 years old based on their exact date of birth and is allowed to enter the casino."""
 
     birthdate_value = datetime.strptime(birthdate, "%d-%m-%Y").date()
     today_value = date.today()
@@ -50,7 +52,7 @@ def calculate_age(birthdate):
 
 
 def create_account(total_cost, name=None):
-    """Zorgt dat er een nieuw spelersaccount kan worden aangemaakt."""
+    """Creates a new player acoount."""
 
     global current_player
 
@@ -72,7 +74,7 @@ def create_account(total_cost, name=None):
 
 
 def create_profile(name, birthdate, gender, balance):
-    """Zorgt dat spelersprofiel zichtbaar wordt a.d.h.v. ingevoerde gegevens."""
+    """Displays the player's profile based on their given information."""
 
     profile = {
         "naam": name,
@@ -85,7 +87,7 @@ def create_profile(name, birthdate, gender, balance):
 
 
 def show_account():
-    """Toont de gegevens van het account dat op dit moment actief is."""
+    """Shows the details of the currently active account."""
 
     profile = players[current_player]
     balance = profile["saldo"]
@@ -98,7 +100,7 @@ def show_account():
 
 
 def show_all_players():
-    """Toont alle spelers en hun huidige saldo."""
+    """Shows all players and their current balance."""
 
     table = Table(
         box=box.SQUARE,
@@ -117,14 +119,14 @@ def show_all_players():
         Panel.fit(
             table,
             title="[bold #FFFFFF]Beschikbare spelers[/bold #FFFFFF]",
-            border_style="#FFFFFF",
+            border_style=BORDER_STYLE,
             padding=(0, 1),
         )
     )
 
 
 def switch_account():
-    """Wisselt naar een ander bestaand spelersaccount en sluit accounts uit die niet bestaan."""
+    """Switches to another existing player account and prevents switching to account that does not exist."""
 
     global current_player
 
@@ -138,7 +140,7 @@ def switch_account():
 
 
 def remove_account():
-    """Hiermee kan een bestaand spelersaccount worden verwijderd en uitgesloten dat het laatste account wordt verwijderd."""
+    """Removes an existing account and prevents the last remaining account from being deleted."""
 
     global current_player
 
@@ -159,19 +161,19 @@ def remove_account():
 
 
 def get_current_balance():
-    """Geeft het huidige saldo van de actieve speler terug."""
+    """Returns the current balance of the active player."""
 
     return players[current_player]["saldo"]
 
 
 def update_current_balance(balance):
-    """Werkt het saldo van de huidige speler bij."""
+    """Updates the current player's balance."""
 
     players[current_player]["saldo"] = balance
 
 
 def register_played_game(game_name):
-    """Registreert hoe vaak de huidige speler een spel heeft gspeeld."""
+    """Tracks how many times the current player has played a certain game."""
 
     played_games = players[current_player]["gespeelde_spellen"]
 
@@ -183,7 +185,7 @@ def register_played_game(game_name):
 
 
 def initialize_player(total_cost):
-    """Weergeeft het overzicht van de spelers en bepaalt welke speler actief is."""
+    """Displays an overview of the players and determines which player is available."""
 
     global players
     global current_player
@@ -248,7 +250,7 @@ def initialize_player(total_cost):
             Panel.fit(
                 table,
                 title="Casino de Gouden Driehoek",
-                border_style="#FFFFFF"
+                border_style=BORDER_STYLE
             )
         )
 
@@ -280,6 +282,6 @@ def initialize_player(total_cost):
             Panel.fit(
                 table,
                 title="Casino de Gouden Driehoek",
-                border_style="#FFFFFF"
+                border_style=BORDER_STYLE
             )
         )

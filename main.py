@@ -4,6 +4,7 @@ from Uitwerkingen.games.blackjack import play_blackjack
 from profiles import show_account, create_account, show_all_players, switch_account, remove_account, initialize_player, \
     register_played_game
 from profiles import get_current_balance, update_current_balance
+from exchange import run_exchange
 
 from rich.console import Console
 from rich.table import Table
@@ -11,6 +12,8 @@ from rich.panel import Panel
 from rich import box
 
 console = Console()
+
+BORDER_STYLE = "#888888"
 
 #Verplichte casinokosten
 ENTRANCE_FEE = 15
@@ -20,7 +23,7 @@ TOTAL_FIXED_COSTS = ENTRANCE_FEE + CLOAKROOM_FEE + MANDATORY_DRINK_COST
 
 
 def show_main_menu():
-    """Toont de verschillende opties van het hoofdmenu."""
+    """Displays the different options of the main menu."""
 
     table = Table(
         box=box.SQUARE,
@@ -35,19 +38,22 @@ def show_main_menu():
     table.add_row("1", "Spellen")
     table.add_row("2", "Saldo")
     table.add_row("3", "Account")
-    table.add_row("4", "Stop")
+    table.add_row("4", "Wisselkantoor")
+    table.add_row("0", "Stop")
 
     console.print(
         Panel.fit(
             table,
             title="[bold #FFFFFF]HOOFDMENU[/bold #FFFFFF]",
-            border_style="#FFFFFF",
+            border_style=BORDER_STYLE,
             padding=(0, 1),
         )
     )
 
 
 def show_account_menu():
+    """Displays the different options of the account menu."""
+
     show_account()
 
     table = Table(
@@ -69,7 +75,7 @@ def show_account_menu():
         Panel.fit(
             table,
             title="[bold #FFFFFF]ACCOUNTMENU[/bold #FFFFFF]",
-            border_style="#FFFFFF",
+            border_style=BORDER_STYLE,
             padding=(0, 1),
         )
     )
@@ -93,7 +99,7 @@ def show_account_menu():
 
 
 def main():
-    """Start het casinoprogramma en reageert op de keuzes van de speler."""
+    """Starts the casino program and handles the player's choices."""
     initialize_player(TOTAL_FIXED_COSTS)
 
     while True:
@@ -122,7 +128,7 @@ def main():
                 Panel.fit(
                     table,
                     title="[bold #FFFFFF]SPELLEN[/bold #FFFFFF]",
-                    border_style="#FFFFFF",
+                    border_style=BORDER_STYLE,
                     padding=(0, 1),
                 )
             )
@@ -161,6 +167,13 @@ def main():
             show_account_menu()
 
         elif choice == 4:
+            euro_amount = run_exchange()
+
+            if euro_amount is not None:
+                balance = get_current_balance() + euro_amount
+                update_current_balance(balance)
+
+        elif choice == 0:
             console.print("[bold]Bedankt voor je bezoek, tot de volgende keer![/bold]")
             break
 

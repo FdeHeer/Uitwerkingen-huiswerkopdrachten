@@ -7,8 +7,10 @@ from random import randint
 
 console = Console()
 
+BORDER_STYLE = "#888888"
+
 def show_roulette_options():
-    """Toont de verschillende opties van roulette."""
+    """Displays the different roulette options."""
 
     table = Table(
         box=box.SQUARE,
@@ -30,14 +32,14 @@ def show_roulette_options():
         Panel.fit(
             table,
             title="[bold #FFFFFF]Roulette[/bold #FFFFFF]",
-            border_style="#FFFFFF",
+            border_style=BORDER_STYLE,
             padding=(0, 1),
         )
     )
 
 
 def determine_win(choice, color, odd_even):
-    """Bepaalt aan de hand van de gekozen gok of de speler heeft gewonnen."""
+    """Determines whether the player has won based on their bet."""
 
     if choice == 1 and color == "[red]rood[/red]":
         return True
@@ -52,7 +54,7 @@ def determine_win(choice, color, odd_even):
 
 
 def ask_for_bet(balance):
-    """Vraagt om een inzet die niet hoger mag zijn dan het huidige saldo."""
+    """Asks the player to place a bet that does not exceed their current balance."""
 
     while True:
         stake = float(input("Hoeveel geld wil je inzetten: "))
@@ -70,7 +72,7 @@ def ask_for_bet(balance):
 
 
 def play_roulette(balance):
-    """In deze functie wordt roulette gespeeld en het saldo bijgewerkt."""
+    """Plays roulette and updates the player's balance."""
 
     while True:
         show_roulette_options()
@@ -119,7 +121,7 @@ def play_roulette(balance):
             Panel.fit(
                 message,
                 title="Output",
-                border_style="#FFFFFF"
+                border_style=BORDER_STYLE
             )
         )
 

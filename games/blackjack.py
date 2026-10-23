@@ -6,13 +6,15 @@ from rich.panel import Panel
 
 console = Console()
 
+BORDER_STYLE = "#FFFFFF"
+
 #Constanten
 SUITS = ["♠", "♥", "♦", "♣"]
 RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 
 
 def create_deck():
-    """Maakt een deck van 52 kaarten"""
+    """Creates a deck of 52 playing cards."""
 
     deck = []
     for suit in SUITS:
@@ -24,7 +26,15 @@ def create_deck():
 
 
 def draw_card(deck,hand):
-    """Trekt een kaart uit het deck en voegt deze toe aan de hand"""
+    """Draws a card from the deck and adds to hand.
+
+    Args:
+        deck (list): The deck of available cards.
+        hand (list): The player's or dealer's current hand.
+
+    Returns:
+        str: The card drawn from the deck.
+    """
 
     card = deck.pop()
     hand.append(card)
@@ -33,7 +43,7 @@ def draw_card(deck,hand):
 
 
 def show_hand(label, hand, hide_card=False):
-    """Toont de kaarten van de hand en zorgt dat de tweede kaart kan worden verborgen"""
+    """Displays cards in hand and allows the second card to be hidden."""
 
     visible_cards = hand[:]
 
@@ -46,14 +56,13 @@ def show_hand(label, hand, hide_card=False):
         Panel(
             message,
             title="Output",
-            border_style="#FFFFFF"
+            border_style=BORDER_STYLE
         )
     )
 
 
 def calculate_hand_value(hand):
-    """Berekent de totale waarde van de hand en maakt daarin onderscheid voor A, J, Q, K in waarde.
-    Alle andere kaarten behouden hun integer waarde"""
+    """Calculates the total value of the hand, assigning special values to A, J, Q and K while all other cards retain their integer values."""
 
     total = 0
     number_of_aces = 0
@@ -73,7 +82,7 @@ def calculate_hand_value(hand):
 
 
 def calculate_card_value(card):
-    """Berekent de waarde van één kaart"""
+    """Calculates the value of a single card."""
 
     rank = card[1:]
 
@@ -86,7 +95,7 @@ def calculate_card_value(card):
 
 
 def play_blackjack(balance):
-    """In deze functie wordt blackjack gespeeld en het saldo bijgewerkt"""
+    """Plays blackjack and updates the player's balance."""
 
     while True:
 
@@ -99,7 +108,7 @@ def play_blackjack(balance):
             Panel(
                 message,
                 title="Blackjack",
-                border_style="#FFFFFF"
+                border_style=BORDER_STYLE
             )
         )
 
@@ -124,7 +133,7 @@ def play_blackjack(balance):
 
             show_hand("Jouw hand", player_hand, hide_card=False)
 
-            console.print(f"[#FFD700]De waarde van de hand is: {calculate_hand_value(player_hand)}[/#FFD700]")
+            console.print(f"[gold]De waarde van de hand is: {calculate_hand_value(player_hand)}[/gold]")
 
             show_hand("Dealer hand", dealer_hand, hide_card=True)
 
@@ -187,7 +196,7 @@ def play_blackjack(balance):
                 Panel(
                     message,
                     title="Output",
-                    border_style="#FFFFFF"
+                    border_style=BORDER_STYLE
                 )
             )
 
